@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>IronForge Gym</title>
-  <script type="text/javascript">
-    !function(){"use strict";!function(e,t){var r=e.amplitude||{_q:[],_iq:{}};if(r.invoked)e.console&&console.error&&console.error("Amplitude snippet has been loaded.");else{r.invoked=!0;var n=t.createElement("script");n.type="text/javascript";n.async=!0;n.src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz";n.onload=function(){e.amplitude.runQueuedFunctions||console.log("[Amplitude] Error: could not load SDK")};t.head.appendChild(n);function s(e,t){e.prototype[t]=function(){return this._q.push({name:t,args:Array.prototype.slice.call(arguments,0)}),this}}var o=function(){this._q=[];return this};var c=r;s(c,"init");s(c,"add");s(c,"remove");s(c,"track");s(c,"logEvent");s(c,"identify");s(c,"setGroup");s(c,"setUserProperties");s(c,"clearUserProperties");s(c,"setOptOut");s(c,"setTransport");s(c,"reset");s(c,"getUserId");s(c,"setUserId");s(c,"getDeviceId");s(c,"setDeviceId");s(c,"getSessionId");s(c,"setSessionId");e.amplitude=c}}(window,document)}();
+  <script src="https://cdn.jsdelivr.net/npm/@amplitude/analytics-browser@2/dist/analytics-browser.min.js"></script>
+  <script>
     amplitude.init('25ebd595ee52e21284c27a4ffd2b345e', { autocapture: false, logLevel: 4 });
     console.log('[Amplitude] init called');
   </script>
