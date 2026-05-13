@@ -4,8 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>IronForge Gym</title>
-  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
+  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"
+    onload="console.log('[Amplitude] CDN script loaded')"
+    onerror="console.error('[Amplitude] CDN script failed to load')">
+  </script>
   <script>
+    console.log('[Amplitude] typeof amplitude:', typeof amplitude);
+    console.log('[Amplitude] window.amplitude globals:', Object.keys(window).filter(k => k.toLowerCase().includes('ampl')));
     if (typeof amplitude !== 'undefined') {
       amplitude.init('25ebd595ee52e21284c27a4ffd2b345e', { autocapture: false, logLevel: 4 });
       console.log('[Amplitude] init called');
