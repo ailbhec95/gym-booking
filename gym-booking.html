@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IronForge Gym</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #0d0d0d;
+      --dark: #1a1a1a;
+      --card: #222222;
+      --accent: #e63946;
+      --accent-dark: #c1121f;
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: #333;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--black);
+      color: var(--text);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 48px;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: var(--accent); }
+    nav ul { display: flex; gap: 32px; list-style: none; }
+    nav ul a { color: var(--text); text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; transition: color 0.2s; }
+    nav ul a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-dark); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0d0d0d 0%, #1a0505 50%, #0d0d0d 100%);
+      padding: 120px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(230,57,70,0.15) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(230,57,70,0.15);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* STATS */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 32px 24px;
+      border-right: 1px solid var(--border);
+      max-width: 220px;
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-size: 2rem; font-weight: 900; color: var(--accent); }
+    .stat-label { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; margin-top: 4px; text-transform: uppercase; }
+
+    /* SECTIONS */
+    section { padding: 80px 48px; }
+    .section-tag {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .section-sub { color: var(--muted); margin-bottom: 48px; font-size: 0.95rem; }
+
+    /* CLASSES */
+    #classes { background: var(--black); }
+    .day-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .day-tab {
+      padding: 8px 20px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .day-tab.active, .day-tab:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .class-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+    .class-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .class-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .class-name { font-size: 1.05rem; font-weight: 700; }
+    .class-badge {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .badge-high { background: rgba(230,57,70,0.2); color: var(--accent); }
+    .badge-med { background: rgba(255,165,0,0.2); color: orange; }
+    .badge-low { background: rgba(46,213,115,0.2); color: #2ed573; }
+    .class-info { font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+    .class-info span { color: var(--text); font-weight: 500; }
+    .class-spots { font-size: 0.8rem; color: var(--muted); margin: 12px 0; }
+    .spots-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .spots-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+    .book-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .book-btn:hover { background: var(--accent); color: white; }
+    .book-btn:disabled {
+      border-color: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+    .book-btn.booked {
+      background: rgba(46,213,115,0.15);
+      border-color: #2ed573;
+      color: #2ed573;
+      cursor: default;
+    }
+
+    /* TRAINERS */
+    #trainers { background: var(--dark); }
+    .trainers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+    }
+    .trainer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      text-align: center;
+      padding-bottom: 24px;
+      transition: border-color 0.2s;
+    }
+    .trainer-card:hover { border-color: var(--accent); }
+    .trainer-avatar {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, #1a0505, #2a0808);
+      margin-bottom: 16px;
+    }
+    .trainer-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .trainer-role { color: var(--accent); font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+
+    /* CONTACT */
+    #contact { background: var(--black); text-align: center; }
+    #contact .section-title { margin: 0 auto 12px; }
+    #contact .section-sub { margin-bottom: 40px; }
+    .contact-form {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .contact-form input, .contact-form textarea {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .contact-form input:focus, .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .contact-form textarea { resize: vertical; min-height: 100px; }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 28px 48px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+    footer span { color: var(--accent); }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px;
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+    .modal-class-info { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
+    .modal-class-info strong { color: var(--accent); }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-group select option { background: var(--dark); }
+    .modal-confirm {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .modal-confirm:hover { background: var(--accent-dark); }
+
+    /* SUCCESS TOAST */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: #1a2e1a;
+      border: 1px solid #2ed573;
+      color: #2ed573;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      nav ul { display: none; }
+      section { padding: 60px 20px; }
+      .stats { flex-wrap: wrap; }
+      .stat { max-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">IRONFORGE</div>
+  <ul>
+    <li><a href="#classes">Classes</a></li>
+    <li><a href="#trainers">Trainers</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('classes').scrollIntoView({behavior:'smooth'})">Book a Class</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">Now Open 24/7</div>
+    <h1>Train Hard.<br><span>Live Stronger.</span></h1>
+    <p>World-class facilities, elite coaching, and a community that pushes you to your limit every single day.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('classes').scrollIntoView({behavior:'smooth'})">Browse Classes</button>
+      <button class="btn-outline">Free Trial Pass</button>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">2,400+</div><div class="stat-label">Members</div></div>
+  <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Classes Weekly</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Expert Trainers</div></div>
+  <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Access</div></div>
+</div>
+
+<!-- CLASSES -->
+<section id="classes">
+  <div class="section-tag">Schedule</div>
+  <div class="section-title">This Week's Classes</div>
+  <div class="section-sub">Pick a day and book your spot — spaces are limited.</div>
+
+  <div class="day-tabs" id="dayTabs"></div>
+  <div class="classes-grid" id="classesGrid"></div>
+</section>
+
+<!-- TRAINERS -->
+<section id="trainers">
+  <div class="section-tag">The Team</div>
+  <div class="section-title">Meet Your Trainers</div>
+  <div class="section-sub">Certified experts who'll push you further than you thought possible.</div>
+  <div class="trainers-grid">
+    <div class="trainer-card">
+      <div class="trainer-avatar">🏋️</div>
+      <div class="trainer-name">Marcus Reid</div>
+      <div class="trainer-role">Strength & HIIT</div>
+    </div>
+    <div class="trainer-card">
+      <div class="trainer-avatar">🧘</div>
+      <div class="trainer-name">Sofia Lane</div>
+      <div class="trainer-role">Yoga & Pilates</div>
+    </div>
+    <div class="trainer-card">
+      <div class="trainer-avatar">🥊</div>
+      <div class="trainer-name">Jay Torres</div>
+      <div class="trainer-role">Boxing & Cardio</div>
+    </div>
+    <div class="trainer-card">
+      <div class="trainer-avatar">🚴</div>
+      <div class="trainer-name">Emma Walsh</div>
+      <div class="trainer-role">Spin & Endurance</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">Get In Touch</div>
+  <div class="section-title">Join the Forge</div>
+  <div class="section-sub">Ready to start? Drop us a message and we'll get back to you within 24 hours.</div>
+  <form class="contact-form" onsubmit="handleContact(event)">
+    <input type="text" placeholder="Your name" required />
+    <input type="email" placeholder="Email address" required />
+    <textarea placeholder="Tell us about your fitness goals..."></textarea>
+    <button type="submit" class="btn-primary">Send Message</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 <span>IronForge Gym</span> &mdash; 14 Mill Street, Dublin &mdash; info@ironforge.ie &mdash; (01) 555 0199</p>
+</footer>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDirect()">&#x2715;</button>
+    <h2>Book Your Spot</h2>
+    <div class="modal-class-info" id="modalClassInfo"></div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="bookName" placeholder="Jane Smith" />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="bookEmail" placeholder="jane@email.com" />
+    </div>
+    <div class="form-group">
+      <label>Membership</label>
+      <select id="bookMembership">
+        <option value="">Select type</option>
+        <option>Full Member</option>
+        <option>Day Pass</option>
+        <option>Trial Pass</option>
+      </select>
+    </div>
+    <button class="modal-confirm" onclick="confirmBooking()">Confirm Booking</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const schedule = {
+    Monday: [
+      { name: "Power HIIT", time: "06:30", duration: "45 min", trainer: "Marcus Reid", intensity: "High", total: 16, booked: 12 },
+      { name: "Yoga Flow", time: "09:00", duration: "60 min", trainer: "Sofia Lane", intensity: "Low", total: 20, booked: 8 },
+      { name: "Boxing Fit", time: "18:00", duration: "50 min", trainer: "Jay Torres", intensity: "High", total: 14, booked: 14 },
+      { name: "Spin Blast", time: "19:30", duration: "45 min", trainer: "Emma Walsh", intensity: "Med", total: 18, booked: 10 },
+    ],
+    Tuesday: [
+      { name: "Pilates Core", time: "07:00", duration: "50 min", trainer: "Sofia Lane", intensity: "Low", total: 18, booked: 5 },
+      { name: "Strength Lab", time: "12:00", duration: "60 min", trainer: "Marcus Reid", intensity: "High", total: 12, booked: 9 },
+      { name: "Cardio Burn", time: "17:30", duration: "40 min", trainer: "Emma Walsh", intensity: "Med", total: 20, booked: 15 },
+    ],
+    Wednesday: [
+      { name: "Power HIIT", time: "06:30", duration: "45 min", trainer: "Marcus Reid", intensity: "High", total: 16, booked: 7 },
+      { name: "Boxing Fit", time: "10:00", duration: "50 min", trainer: "Jay Torres", intensity: "High", total: 14, booked: 11 },
+      { name: "Yoga Flow", time: "18:30", duration: "60 min", trainer: "Sofia Lane", intensity: "Low", total: 20, booked: 4 },
+      { name: "Spin Blast", time: "20:00", duration: "45 min", trainer: "Emma Walsh", intensity: "Med", total: 18, booked: 16 },
+    ],
+    Thursday: [
+      { name: "Pilates Core", time: "07:00", duration: "50 min", trainer: "Sofia Lane", intensity: "Low", total: 18, booked: 9 },
+      { name: "Strength Lab", time: "13:00", duration: "60 min", trainer: "Marcus Reid", intensity: "High", total: 12, booked: 3 },
+      { name: "Cardio Burn", time: "18:00", duration: "40 min", trainer: "Emma Walsh", intensity: "Med", total: 20, booked: 18 },
+    ],
+    Friday: [
+      { name: "Power HIIT", time: "06:30", duration: "45 min", trainer: "Marcus Reid", intensity: "High", total: 16, booked: 14 },
+      { name: "Boxing Fit", time: "09:30", duration: "50 min", trainer: "Jay Torres", intensity: "High", total: 14, booked: 6 },
+      { name: "Yoga Flow", time: "17:00", duration: "60 min", trainer: "Sofia Lane", intensity: "Low", total: 20, booked: 12 },
+    ],
+    Saturday: [
+      { name: "Weekend Warrior", time: "08:00", duration: "75 min", trainer: "Marcus Reid", intensity: "High", total: 20, booked: 18 },
+      { name: "Spin Marathon", time: "10:00", duration: "60 min", trainer: "Emma Walsh", intensity: "Med", total: 18, booked: 10 },
+      { name: "Recovery Yoga", time: "12:00", duration: "60 min", trainer: "Sofia Lane", intensity: "Low", total: 20, booked: 7 },
+    ],
+    Sunday: [
+      { name: "Open Boxing", time: "10:00", duration: "60 min", trainer: "Jay Torres", intensity: "Med", total: 16, booked: 5 },
+      { name: "Stretch & Restore", time: "12:00", duration: "50 min", trainer: "Sofia Lane", intensity: "Low", total: 20, booked: 3 },
+    ],
+  };
+
+  const days = Object.keys(schedule);
+  const today = days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1] || days[0];
+  let activeDay = today;
+  let currentBookingKey = null;
+  const bookedClasses = new Set();
+
+  function renderTabs() {
+    const tabs = document.getElementById('dayTabs');
+    tabs.innerHTML = days.map(d => `
+      <button class="day-tab ${d === activeDay ? 'active' : ''}" onclick="setDay('${d}')">${d}</button>
+    `).join('');
+  }
+
+  function intensityBadge(i) {
+    if (i === 'High') return '<span class="class-badge badge-high">High Intensity</span>';
+    if (i === 'Med')  return '<span class="class-badge badge-med">Moderate</span>';
+    return '<span class="class-badge badge-low">Low Intensity</span>';
+  }
+
+  function renderClasses() {
+    const grid = document.getElementById('classesGrid');
+    const classes = schedule[activeDay];
+    grid.innerHTML = classes.map((c, i) => {
+      const key = `${activeDay}-${i}`;
+      const isBooked = bookedClasses.has(key);
+      const isFull = c.booked >= c.total;
+      const spotsFill = Math.round((c.booked / c.total) * 100);
+      const spotsLeft = c.total - c.booked;
+
+      let btnText = isBooked ? '&#10003; Booked!' : isFull ? 'Class Full' : 'Book Now';
+      let btnClass = isBooked ? 'booked' : '';
+      let btnDisabled = isFull && !isBooked ? 'disabled' : '';
+
+      return `
+        <div class="class-card">
+          <div class="class-header">
+            <div class="class-name">${c.name}</div>
+            ${intensityBadge(c.intensity)}
+          </div>
+          <div class="class-info">&#128337; <span>${c.time}</span> &nbsp;|&nbsp; ${c.duration}</div>
+          <div class="class-info">&#128100; <span>${c.trainer}</span></div>
+          <div class="class-spots">
+            ${isBooked ? 'You\'re booked in!' : isFull ? 'No spots remaining' : `${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left`}
+            <div class="spots-bar"><div class="spots-fill" style="width:${spotsFill}%"></div></div>
+          </div>
+          <button class="book-btn ${btnClass}" ${btnDisabled}
+            onclick="openModal('${key}', '${c.name}', '${activeDay}', '${c.time}', '${c.trainer}')">
+            ${btnText}
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function setDay(day) {
+    activeDay = day;
+    renderTabs();
+    renderClasses();
+  }
+
+  function openModal(key, name, day, time, trainer) {
+    if (bookedClasses.has(key)) return;
+    currentBookingKey = key;
+    document.getElementById('modalClassInfo').innerHTML =
+      `<strong>${name}</strong> &mdash; ${day} at ${time} with ${trainer}`;
+    document.getElementById('bookName').value = '';
+    document.getElementById('bookEmail').value = '';
+    document.getElementById('bookMembership').value = '';
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+  }
+
+  function closeModalDirect() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    currentBookingKey = null;
+  }
+
+  function confirmBooking() {
+    const name = document.getElementById('bookName').value.trim();
+    const email = document.getElementById('bookEmail').value.trim();
+    const membership = document.getElementById('bookMembership').value;
+    if (!name || !email || !membership) {
+      showToast('Please fill in all fields.', '#e63946');
+      return;
+    }
+    bookedClasses.add(currentBookingKey);
+    closeModalDirect();
+    renderClasses();
+    showToast(`&#10003; Booked! See you in class, ${name.split(' ')[0]}!`);
+  }
+
+  function showToast(msg, color = '#2ed573') {
+    const t = document.getElementById('toast');
+    t.innerHTML = msg;
+    t.style.borderColor = color;
+    t.style.color = color;
+    t.style.background = color === '#2ed573' ? '#1a2e1a' : '#2e1a1a';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function handleContact(e) {
+    e.preventDefault();
+    showToast('&#10003; Message sent! We\'ll be in touch soon.');
+    e.target.reset();
+  }
+
+  renderTabs();
+  renderClasses();
+</script>
+</body>
+</html>
