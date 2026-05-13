@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>IronForge Gym</title>
+  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
+  <script>
+    window.amplitude.init('25ebd595ee52e21284c27a4ffd2b345e', { autocapture: false });
+  </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -661,6 +665,7 @@
     activeDay = day;
     renderTabs();
     renderClasses();
+    amplitude.track('Day Tab Viewed', { day });
   }
 
   function openModal(key, name, day, time, trainer) {
@@ -672,6 +677,7 @@
     document.getElementById('bookEmail').value = '';
     document.getElementById('bookMembership').value = '';
     document.getElementById('modalOverlay').classList.add('open');
+    amplitude.track('Booking Modal Opened', { class: name, day, time, trainer });
   }
 
   function closeModal(e) {
@@ -692,6 +698,15 @@
       return;
     }
     bookedClasses.add(currentBookingKey);
+    const [bookDay, bookIdx] = currentBookingKey.split('-');
+    const bookedClass = schedule[bookDay][bookIdx];
+    amplitude.track('Booking Completed', {
+      class: bookedClass.name,
+      day: bookDay,
+      time: bookedClass.time,
+      trainer: bookedClass.trainer,
+      membership: membership
+    });
     closeModalDirect();
     renderClasses();
     showToast(`&#10003; Booked! See you in class, ${name.split(' ')[0]}!`);
@@ -709,12 +724,14 @@
 
   function handleContact(e) {
     e.preventDefault();
+    amplitude.track('Contact Form Submitted');
     showToast('&#10003; Message sent! We\'ll be in touch soon.');
     e.target.reset();
   }
 
   renderTabs();
   renderClasses();
+  amplitude.track('Page Viewed', { page: 'IronForge Home' });
 </script>
 </body>
 </html>
