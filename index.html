@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>IronForge Gym</title>
-  <script src="https://cdn.jsdelivr.net/npm/@amplitude/analytics-browser@2/dist/analytics-browser.min.js"></script>
+  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
   <script>
-    if (window.amplitude) {
+    if (typeof amplitude !== 'undefined') {
       amplitude.init('25ebd595ee52e21284c27a4ffd2b345e', { autocapture: false, logLevel: 4 });
       console.log('[Amplitude] init called');
     } else {
@@ -671,7 +671,7 @@
     renderTabs();
     renderClasses();
     console.log('[Amplitude] Tracking: Day Tab Viewed', { day });
-    if (window.amplitude) amplitude.track('Day Tab Viewed', { day });
+    if (typeof amplitude !== 'undefined') amplitude.track('Day Tab Viewed', { day });
   }
 
   function openModal(key, name, day, time, trainer) {
@@ -684,7 +684,7 @@
     document.getElementById('bookMembership').value = '';
     document.getElementById('modalOverlay').classList.add('open');
     console.log('[Amplitude] Tracking: Booking Modal Opened', { class: name, day, time, trainer });
-    if (window.amplitude) amplitude.track('Booking Modal Opened', { class: name, day, time, trainer });
+    if (typeof amplitude !== 'undefined') amplitude.track('Booking Modal Opened', { class: name, day, time, trainer });
   }
 
   function closeModal(e) {
@@ -708,7 +708,7 @@
     const [bookDay, bookIdx] = currentBookingKey.split('-');
     const bookedClass = schedule[bookDay][bookIdx];
     console.log('[Amplitude] Tracking: Booking Completed', { class: bookedClass.name, day: bookDay, membership });
-    if (window.amplitude) amplitude.track('Booking Completed', {
+    if (typeof amplitude !== 'undefined') amplitude.track('Booking Completed', {
       class: bookedClass.name,
       day: bookDay,
       time: bookedClass.time,
@@ -733,7 +733,7 @@
   function handleContact(e) {
     e.preventDefault();
     console.log('[Amplitude] Tracking: Contact Form Submitted');
-    if (window.amplitude) amplitude.track('Contact Form Submitted');
+    if (typeof amplitude !== 'undefined') amplitude.track('Contact Form Submitted');
     showToast('&#10003; Message sent! We\'ll be in touch soon.');
     e.target.reset();
   }
@@ -741,7 +741,7 @@
   renderTabs();
   renderClasses();
   console.log('[Amplitude] Tracking: Page Viewed');
-  if (window.amplitude) amplitude.track('Page Viewed', { page: 'IronForge Home' });
+  if (typeof amplitude !== 'undefined') amplitude.track('Page Viewed', { page: 'IronForge Home' });
 </script>
 </body>
 </html>
